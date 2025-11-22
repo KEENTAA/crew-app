@@ -29,13 +29,88 @@ const HomePage = () => (
         <HeroSection />
         <HowItWorks />
         
-        <section style={{ padding: '50px', textAlign: 'center' }}>
-            <h2>Proyectos Destacados</h2>
+        {/* Sección de Proyectos Destacados con mejor estilo */}
+        <section style={featuredProjectsStyles.section}>
+            <div style={featuredProjectsStyles.container}>
+                <div style={featuredProjectsStyles.header}>
+                    <h2 style={featuredProjectsStyles.title}>Proyectos Destacados</h2>
+                    <p style={featuredProjectsStyles.subtitle}>
+                        Descubre las ideas más innovadoras que están buscando apoyo
+                    </p>
+                </div>
+                <ProjectList />
+                <div style={featuredProjectsStyles.ctaContainer}>
+                    <a href="/proyectos" style={featuredProjectsStyles.ctaButton}>
+                        Ver todos los proyectos
+                    </a>
+                </div>
+            </div>
         </section>
-        
-        <ProjectList /> 
     </>
 );
+
+// Estilos para la sección de proyectos destacados
+const featuredProjectsStyles = {
+    section: {
+        padding: '80px 20px',
+        background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+    },
+    container: {
+        maxWidth: '1200px',
+        margin: '0 auto',
+    },
+    header: {
+        textAlign: 'center',
+        marginBottom: '50px',
+    },
+    title: {
+        fontSize: '2.5rem',
+        fontWeight: '700',
+        color: '#1e293b',
+        margin: '0 0 15px 0',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        WebkitBackgroundClip: 'text',
+        WebkitTextFillColor: 'transparent',
+        backgroundClip: 'text',
+    },
+    subtitle: {
+        fontSize: '1.2rem',
+        color: '#64748b',
+        margin: '0',
+        maxWidth: '600px',
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        lineHeight: '1.6',
+    },
+    ctaContainer: {
+        textAlign: 'center',
+        marginTop: '50px',
+    },
+    ctaButton: {
+        display: 'inline-block',
+        padding: '14px 32px',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        color: 'white',
+        textDecoration: 'none',
+        borderRadius: '12px',
+        fontWeight: '600',
+        fontSize: '1.1rem',
+        transition: 'all 0.3s ease',
+        boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)',
+        ':hover': {
+            transform: 'translateY(-2px)',
+            boxShadow: '0 8px 25px rgba(102, 126, 234, 0.4)',
+        }
+    },
+};
+
+// Aplicar hover effect
+Object.assign(featuredProjectsStyles.ctaButton, {
+    ':hover': {
+        transform: 'translateY(-2px)',
+        boxShadow: '0 8px 25px rgba(102, 126, 234, 0.4)',
+    }
+});
 
 // Componente de página no encontrada
 const NotFoundPage = () => (

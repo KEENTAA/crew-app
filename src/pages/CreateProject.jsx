@@ -166,6 +166,7 @@ export default function CreateProject() {
         projectWalletBalance: 0,
         withdrawableBalance: 0,
         searchKeywords,
+        tags: tagsArray,
         createdAt: serverTimestamp(),
       });
 
