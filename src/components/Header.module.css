@@ -1,0 +1,472 @@
+/* src/components/Header.module.css */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  z-index: 1000;
+  transition: all 0.3s ease;
+  height: 70px; /* 🔥 Altura fija para consistencia */
+}
+
+.header.scrolled {
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border-bottom-color: rgba(102, 126, 234, 0.1);
+}
+
+/* 🔥 ESPACIO RESERVADO - Esto evita el desfase */
+.headerSpacer {
+  height: 70px; /* Misma altura que el header */
+  width: 100%;
+}
+
+.headerContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  height: 100%; /* 🔥 Asegura que ocupe toda la altura del header */
+}
+
+/* Header Left */
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s ease;
+}
+
+.logo:hover {
+  transform: translateY(-1px);
+}
+
+.logoIcon {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rocketIcon {
+  font-size: 1.5rem;
+  color: white;
+}
+
+.logoText {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.logoPrimary {
+  font-size: 1.8rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Navegación Principal */
+.mainNav {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: #6c757d;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.navLink:hover {
+  color: #667eea;
+  background: rgba(102, 126, 234, 0.05);
+}
+
+.navLink.active {
+  color: #667eea;
+  background: rgba(102, 126, 234, 0.1);
+  font-weight: 600;
+}
+
+.navLink.active::after {
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  background: #667eea;
+  border-radius: 50%;
+}
+
+.navIcon {
+  font-size: 1rem;
+}
+
+/* Header Right */
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Botones Generales */
+.walletBtn,
+.createProjectBtn,
+.loginBtn,
+.signupBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btnIcon {
+  font-size: 1rem;
+}
+
+.btnText {
+  font-weight: 600;
+}
+
+/* Botón Wallet */
+.walletBtn {
+  background: linear-gradient(135deg, #f0f2ff 0%, #e0e7ff 100%);
+  color: #667eea;
+  border: 2px solid rgba(102, 126, 234, 0.2);
+}
+
+.walletBtn:hover {
+  background: linear-gradient(135deg, #e0e7ff 0%, #d0d7ff 100%);
+  border-color: rgba(102, 126, 234, 0.4);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+}
+
+/* Botón Crear Proyecto */
+.createProjectBtn {
+  background: linear-gradient(135deg, #00cc66 0%, #00b359 100%);
+  color: white;
+  border: 2px solid #00cc66;
+}
+
+.createProjectBtn:hover {
+  background: linear-gradient(135deg, #00b359 0%, #00994d 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 204, 102, 0.3);
+}
+
+/* Botones de Auth */
+.loginBtn {
+  background: transparent;
+  color: #6c757d;
+  border: 2px solid #e9ecef;
+}
+
+.loginBtn:hover {
+  background: #f8f9fa;
+  border-color: #667eea;
+  color: #667eea;
+}
+
+.signupBtn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: 2px solid transparent;
+}
+
+.signupBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+/* Notificaciones */
+.notificationsWrapper {
+  display: flex;
+  align-items: center;
+}
+
+/* Profile Menu */
+.profileMenuWrapper {
+  position: relative;
+}
+
+.profileBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: transparent;
+  border: 2px solid transparent;
+  padding: 0.5rem;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.profileBtn:hover {
+  background: rgba(102, 126, 234, 0.05);
+  border-color: rgba(102, 126, 234, 0.2);
+}
+
+.profileBtn.active {
+  background: rgba(102, 126, 234, 0.1);
+  border-color: rgba(102, 126, 234, 0.3);
+}
+
+.profileAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid rgba(102, 126, 234, 0.2);
+  transition: border-color 0.3s ease;
+}
+
+.profileBtn:hover .profileAvatar {
+  border-color: rgba(102, 126, 234, 0.4);
+}
+
+.profileAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.chevronIcon {
+  font-size: 0.8rem;
+  color: #6c757d;
+  transition: transform 0.3s ease;
+}
+
+.profileBtn.active .chevronIcon {
+  transform: rotate(180deg);
+  color: #667eea;
+}
+
+/* Menú Desplegable */
+.headerMenu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 0.5rem;
+  width: 280px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  opacity: 0;
+  transform: translateY(-10px);
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 1001; /* 🔥 Mayor que el header */
+}
+
+.headerMenu.open {
+  opacity: 1;
+  transform: translateY(0);
+  visibility: visible;
+}
+
+.menuHeader {
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: linear-gradient(135deg, #f8f9ff 0%, #f0f2ff 100%);
+  border-radius: 16px 16px 0 0;
+}
+
+.menuAvatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid rgba(102, 126, 234, 0.3);
+}
+
+.menuAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.menuUserInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.menuName {
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 0.25rem 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 1rem;
+}
+
+.menuRole {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: #667eea;
+  margin: 0;
+  font-weight: 600;
+}
+
+.menuRoleIcon {
+  font-size: 0.7rem;
+}
+
+.menuDivider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.2), transparent);
+  margin: 0.5rem 0;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  text-decoration: none;
+  color: #6c757d;
+  transition: all 0.3s ease;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.menuItem:hover {
+  background: rgba(102, 126, 234, 0.05);
+  color: #667eea;
+}
+
+.menuIcon {
+  font-size: 1rem;
+  color: #667eea;
+  width: 16px;
+}
+
+.menuLogout {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
+  color: #e53e3e;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  border-radius: 0 0 16px 16px;
+}
+
+.menuLogout:hover {
+  background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%);
+  color: #c53030;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .headerContainer {
+    padding: 0.75rem 1.5rem;
+  }
+  
+  .headerLeft {
+    gap: 2rem;
+  }
+  
+  .mainNav {
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .headerContainer {
+    padding: 0.75rem 1rem;
+  }
+  
+  .mainNav {
+    display: none;
+  }
+  
+  .btnText {
+    display: none;
+  }
+  
+  .walletBtn,
+  .createProjectBtn,
+  .loginBtn,
+  .signupBtn {
+    padding: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .headerContainer {
+    padding: 0.5rem;
+  }
+  
+  .logoIcon {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .rocketIcon {
+    font-size: 1.2rem;
+  }
+  
+  .logoPrimary {
+    font-size: 1.5rem;
+  }
+  
+  .headerMenu {
+    width: 250px;
+    right: -50px;
+  }
+}

@@ -1,0 +1,9 @@
+/* src/index.css */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body {
+  font-family: sans-serif; /* Usa una fuente moderna y legible */
+}

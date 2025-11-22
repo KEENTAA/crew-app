@@ -1,0 +1,646 @@
+/* src/pages/Wallet.module.css */
+.container {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+.header {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #7c3aed;
+    margin: 0;
+}
+
+/* Mensajes */
+.messageContainer {
+    margin-bottom: 1.5rem;
+}
+
+.successMessage {
+    background: #d1fae5;
+    color: #065f46;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    border: 1px solid #a7f3d0;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.errorMessage {
+    background: #fee2e2;
+    color: #b91c1c;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    border: 1px solid #fecaca;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.messageIcon {
+    font-size: 1.2rem;
+}
+
+.centerContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50vh;
+    font-size: 1.25rem;
+    color: #7c3aed;
+    font-weight: 500;
+    gap: 0.75rem;
+    flex-direction: column;
+}
+
+.spinner {
+    width: 24px;
+    height: 24px;
+    color: #7c3aed;
+    animation: spin 1s linear infinite;
+}
+
+.buttonSpinner {
+    width: 16px;
+    height: 16px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Sección de Tarjeta */
+.cardSection {
+    margin-bottom: 2rem;
+}
+
+/* Tarjeta Virtual */
+.cardBox {
+    background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+    color: white;
+    padding: 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3);
+    position: relative;
+    overflow: hidden;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.cardBox::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+}
+
+.cardContent {
+    position: relative;
+    z-index: 2;
+}
+
+.cardHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+}
+
+.cardHeader h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    color: white;
+}
+
+.cardIcon {
+    width: 24px;
+    height: 24px;
+    color: white;
+}
+
+.cardChip {
+    width: 50px;
+    height: 35px;
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    border-radius: 8px;
+    margin-bottom: 2rem;
+}
+
+.cardName {
+    font-size: 1.1rem;
+    margin: 0 0 1.5rem 0;
+    opacity: 0.9;
+}
+
+.cardNumber {
+    font-size: 1.75rem;
+    letter-spacing: 3px;
+    font-weight: 600;
+    margin: 1rem 0 2rem 0;
+    font-family: 'Courier New', monospace;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.cardDetails {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+}
+
+.cardDetails > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.cardLabel {
+    font-size: 0.75rem;
+    opacity: 0.7;
+    text-transform: uppercase;
+}
+
+/* Solicitud de tarjeta */
+.cardRequestBox {
+    background: white;
+    border: 2px dashed #8B5CF6;
+    padding: 3rem 2rem;
+    text-align: center;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.3s ease;
+    max-width: 500px;
+    margin: 0 auto;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.cardRequestBox:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(139, 92, 246, 0.15);
+}
+
+.iconContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+}
+
+.icon {
+    width: 24px;
+    height: 24px;
+    color: white;
+}
+
+.cardRequestTitle {
+    color: #1f2937;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.cardRequestText {
+    color: #6b7280;
+    margin: 0;
+    line-height: 1.5;
+    font-size: 1rem;
+}
+
+.actionButton {
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.actionButton:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4);
+}
+
+.actionButton:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Sección Inferior */
+.bottomSection {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+/* Balance y Recarga */
+.balanceSection {
+    display: flex;
+    flex-direction: column;
+}
+
+.balanceCard {
+    background: white;
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border: 1px solid #f1f5f9;
+}
+
+.balanceHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.balanceHeader h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0;
+}
+
+.balanceIcon {
+    width: 24px;
+    height: 24px;
+    color: #8B5CF6;
+}
+
+.balanceAmount {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #8B5CF6;
+    margin: 0.5rem 0 2rem 0;
+    text-align: center;
+    text-shadow: 0 2px 4px rgba(139, 92, 246, 0.2);
+}
+
+.rechargeForm {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+.rechargeTitle {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0 0 0.5rem 0;
+}
+
+.rechargeInfo {
+    font-size: 0.9rem;
+    text-align: center;
+    color: #6b7280;
+    margin: 0 0 1rem 0;
+}
+
+.inputGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.inputLabel {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+.rechargeInput {
+    padding: 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.rechargeInput:focus {
+    outline: none;
+    border-color: #8B5CF6;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+}
+
+.cardInputRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.rechargeButton {
+    padding: 1.25rem 2rem;
+    background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.rechargeButton:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4);
+}
+
+.rechargeButton:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Historial de Transacciones */
+.historySection {
+    display: flex;
+    flex-direction: column;
+}
+
+.historyContainer {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border: 1px solid #f1f5f9;
+    height: fit-content;
+    max-height: 600px;
+    display: flex;
+    flex-direction: column;
+}
+
+.historyHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.historyHeader h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0;
+}
+
+.historyIcon {
+    width: 24px;
+    height: 24px;
+    color: #8B5CF6;
+}
+
+.historyList {
+    display: flex;
+    flexDirection: column;
+    gap: 0.75rem;
+    overflow-y: auto;
+    flex: 1;
+    padding-right: 0.5rem;
+}
+
+/* Scrollbar personalizado */
+.historyList::-webkit-scrollbar {
+    width: 6px;
+}
+
+.historyList::-webkit-scrollbar-track {
+    background: #f3f4f6;
+    border-radius: 3px;
+}
+
+.historyList::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 3px;
+}
+
+.historyList::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+}
+
+/* Estado vacío */
+.emptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem;
+    text-align: center;
+    color: #6b7280;
+}
+
+.emptyIcon {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+    color: #9ca3af;
+}
+
+.emptyText {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem 0;
+    color: #374151;
+}
+
+.emptySubtext {
+    font-size: 0.875rem;
+    margin: 0;
+    opacity: 0.7;
+}
+
+/* Items de transacción */
+.transactionItem {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1px solid #f1f5f9;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.transactionItem:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border-color: #e5e7eb;
+}
+
+.transactionIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.creditIcon {
+    width: 20px;
+    height: 20px;
+    color: #10b981;
+}
+
+.debitIcon {
+    width: 20px;
+    height: 20px;
+    color: #ef4444;
+}
+
+.transactionDetails {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 0.25rem;
+}
+
+.transactionType {
+    font-weight: 600;
+    color: #1f2937;
+    font-size: 0.95rem;
+}
+
+.transactionDate {
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+.transactionAmountContainer {
+    display: flex;
+    align-items: center;
+}
+
+.transactionAmount {
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-variant-numeric: tabular-nums;
+}
+
+.transactionAmount.CREDITO {
+    color: #10b981;
+    background: rgba(16, 185, 129, 0.1);
+}
+
+.transactionAmount.DEBITO {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+}
+
+/* Responsive */
+@media (max-width: 968px) {
+    .bottomSection {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .container {
+        padding: 1rem;
+    }
+    
+    .title {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .cardBox {
+        padding: 2rem 1.5rem;
+        max-width: 100%;
+    }
+    
+    .cardNumber {
+        font-size: 1.5rem;
+        letter-spacing: 2px;
+    }
+    
+    .balanceAmount {
+        font-size: 2.5rem;
+    }
+    
+    .cardInputRow {
+        grid-template-columns: 1fr;
+    }
+    
+    .cardRequestBox {
+        padding: 2rem 1.5rem;
+        max-width: 100%;
+    }
+    
+    .historyContainer {
+        padding: 1.5rem;
+        max-height: none;
+    }
+    
+    .transactionItem {
+        padding: 0.875rem;
+    }
+    
+    .transactionType {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .title {
+        font-size: 1.75rem;
+    }
+    
+    .container {
+        padding: 0.5rem;
+    }
+    
+    .balanceAmount {
+        font-size: 2rem;
+    }
+    
+    .cardBox {
+        padding: 1.5rem;
+    }
+    
+    .cardNumber {
+        font-size: 1.25rem;
+    }
+}
