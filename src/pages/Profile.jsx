@@ -18,7 +18,7 @@ import {
 } from 'firebase/firestore'; 
 import styles from './Profile.module.css';
 
-// 1. AÑADIMOS LOS ICONOS QUE FALTABAN (FaFire, FaStar)
+// ICONOS
 import { 
     FaUser, FaEnvelope, FaUserShield, FaCalendarAlt, FaCheckCircle, FaClock,
     FaTimesCircle, FaEdit, FaSave, FaTimes, FaCamera, FaIdCard, FaUpload,
@@ -29,11 +29,10 @@ import { MdVerifiedUser, MdPendingActions, MdPhotoCamera, MdAttachFile } from 'r
 import { FiUser, FiCalendar, FiDollarSign, FiEdit, FiCamera, FiUpload, FiCheck, FiArrowLeft } from 'react-icons/fi';
 
 // =========================================================
-// 2. COMPONENTE PROJECT CARD (Integrado desde tu código)
+// COMPONENTE PROJECT CARD
 // =========================================================
 const ProjectCard = ({ project }) => {
     const creatorDisplay = project.creadorNombre || project.creadorID?.substring(0, 8) + '...';
-    // Aseguramos fallback si no hay imagen
     const imageSource = project.imagenBase64 || project.imagenURL || 'https://via.placeholder.com/300x200?text=Proyecto';
     const percentage = project.metaTotal > 0 ? (project.recaudado / project.metaTotal) * 100 : 0;
     const isFunded = percentage >= 100;
@@ -119,7 +118,7 @@ const ProjectCard = ({ project }) => {
 };
 
 // =========================================================
-// 3. COMPONENTE PRINCIPAL PROFILE
+// COMPONENTE PRINCIPAL PROFILE
 // =========================================================
 const Profile = () => {
     const { userId } = useParams();
@@ -134,11 +133,13 @@ const Profile = () => {
     const [error, setError] = useState(null);
     const [message, setMessage] = useState(null);
     
-    // Estados para subida de imágenes y verificación
+    // Estados para subida de archivos
     const [ciNumberInput, setCiNumberInput] = useState(''); 
     const [ciPhotoFile, setCiPhotoFile] = useState(null); 
     const [newPhotoFile, setNewPhotoFile] = useState(null); 
     const [photoPreview, setPhotoPreview] = useState(null); 
+    const [documentFile, setDocumentFile] = useState(null);
+    const [documentInfo, setDocumentInfo] = useState({ name: '', size: 0, exists: false });
     
     const DEFAULT_AVATAR = 'https://cdn-icons-png.flaticon.com/512/149/149071.png'; 
 
@@ -164,11 +165,19 @@ const Profile = () => {
 
                 const userData = userDocSnap.data();
                 
+                // Configurar información del documento adjunto
+                const docExists = !!userData.documentBase64;
+                const docName = userData.documentName || (docExists ? 'Documento adjunto' : '');
+
                 if (isOwnProfile) {
                     setProfileUserData(userData);
                     setDisplayName(userData.displayName || userData.nombre || currentUser?.displayName || currentUser?.email?.split('@')[0] || 'Usuario');
                     setCiNumberInput(userData.ciNumber || '');
                     setPhotoPreview(userData.customPhotoBase64 || userData.photoURL);
+                    
+                    // Actualiza el estado del documento
+                    setDocumentInfo({ name: docName, size: 0, exists: docExists });
+
                 } else {
                     const publicUserData = {
                         id: userDocSnap.id,
@@ -181,15 +190,13 @@ const Profile = () => {
                         bio: userData.bio,
                         website: userData.website,
                         socialLinks: userData.socialLinks,
-                        isIDVerified: userData.isIDVerified
+                        isIDVerified: userData.isIDVerified,
                     };
                     setProfileUserData(publicUserData);
                 }
 
                 // Cargar Proyectos
-                
                 const projectsRef = collection(db, 'proyectos');
-                console.log("🔍 Buscando proyectos para ID:", targetUserId);
                 const userProjectsQuery = query(
                     projectsRef, 
                     where('creadorID', '==', targetUserId),
@@ -225,10 +232,15 @@ const Profile = () => {
             if (docSnap.exists()) {
                 const data = docSnap.data();
                 setProfileUserData(data);
-                // No sobrescribimos inputs de edición si el usuario está escribiendo
+                
+                // Configurar información del documento adjunto
+                const docExists = !!data.documentBase64;
+                const docName = data.documentName || (docExists ? 'Documento adjunto' : '');
+                
                 if (!isEditing) {
                     setCiNumberInput(data.ciNumber || '');
                     setPhotoPreview(data.customPhotoBase64 || data.photoURL);
+                    setDocumentInfo({ name: docName, size: 0, exists: docExists });
                 }
             }
         });
@@ -272,6 +284,32 @@ const Profile = () => {
         reader.readAsDataURL(file);
     };
 
+    const handleDocumentChange = (e) => {
+        if (!isOwnProfile) return;
+        const file = e.target.files[0];
+        if (!file) {
+            setDocumentFile(null);
+            if (!profileUserData.documentBase64) {
+                 setDocumentInfo(prev => ({ ...prev, name: '' }));
+            }
+            return;
+        }
+
+        if (file.size > 1024 * 1024) { 
+            alert("El documento es demasiado grande. Máximo 1MB.");
+            e.target.value = null;
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setDocumentFile(reader.result);
+            setDocumentInfo({ name: file.name, size: file.size, exists: true });
+            setMessage(`Documento "${file.name}" listo para guardar.`);
+        };
+        reader.readAsDataURL(file);
+    };
+
     const handleUpdateProfile = async (e) => {
         e.preventDefault();
         if (!isOwnProfile || !currentUser) return;
@@ -291,9 +329,18 @@ const Profile = () => {
                 updates.customPhotoBase64 = newPhotoFile;
             }
 
+            if (documentFile) {
+                updates.documentBase64 = documentFile;
+                updates.documentName = documentInfo.name;
+            } else if (documentInfo.exists === false && profileUserData.documentBase64) {
+                updates.documentBase64 = null;
+                updates.documentName = null;
+            }
+
             await updateDoc(doc(db, 'usuarios', currentUser.uid), updates);
             setIsEditing(false);
             setNewPhotoFile(null); 
+            setDocumentFile(null);
             setMessage('Perfil actualizado con éxito!');
 
         } catch (err) {
@@ -339,7 +386,6 @@ const Profile = () => {
         }
     };
 
-    // Funciones visuales
     const getRoleIcon = () => {
         if (!profileUserData.rol) return <FaUser className={styles.roleIcon} />;
         switch (profileUserData.rol) {
@@ -386,7 +432,7 @@ const Profile = () => {
                     </h1>
                     {isOwnProfile && !isEditing && (
                         <button onClick={() => setIsEditing(true)} className={styles.editButton}>
-                            <FiEdit /> Editar
+                            <FiEdit /> Editar Perfil
                         </button>
                     )}
                 </div>
@@ -402,10 +448,18 @@ const Profile = () => {
                     <div className={styles.avatarContainer}>
                         <img src={finalPhotoURL} alt="Avatar" className={styles.avatarImage} />
                         {isOwnProfile && (
-                            <label className={styles.avatarOverlay}>
-                                <input type="file" accept="image/*" onChange={handlePhotoChange} className={styles.fileInputHidden} />
-                                <FaCamera />
-                            </label>
+                            <div className={styles.avatarOverlay}>
+                                <label className={styles.changePhotoButton}>
+                                    <input 
+                                        type="file" 
+                                        accept="image/*" 
+                                        onChange={handlePhotoChange} 
+                                        className={styles.fileInputHidden} 
+                                    />
+                                    <FaCamera />
+                                    <span>Cambiar foto</span>
+                                </label>
+                            </div>
                         )}
                         <div className={styles.roleBadge} style={{ backgroundColor: getRoleColor() }}>
                             {getRoleIcon()}
@@ -447,12 +501,32 @@ const Profile = () => {
                             <p>{profileUserData.bio}</p>
                         </div>
                     )}
+                    
+                    {/* Mostrar documento actual */}
+                    {isOwnProfile && documentInfo.exists && !documentFile && (
+                        <div className={styles.documentStatus}>
+                            <MdAttachFile className={styles.documentIcon} />
+                            <span>Documento adjunto: <strong>{profileUserData.documentName || 'Ver Documento'}</strong></span>
+                            <a 
+                                href={profileUserData.documentBase64} 
+                                download={profileUserData.documentName || 'documento.pdf'}
+                                className={styles.downloadLink}
+                            >
+                                (Descargar)
+                            </a>
+                        </div>
+                    )}
+
+                    {isOwnProfile && isEditing && documentFile && (
+                        <div className={styles.documentPending}>
+                            <MdAttachFile className={styles.documentPendingIcon} />
+                            <span><strong>{documentInfo.name}</strong> listo para subir. ¡Presiona <strong>Guardar</strong>!</span>
+                        </div>
+                    )}
                 </div>
             </div>
 
-            {/* ======================================================= */}
-            {/* 4. NUEVA SECCIÓN DE PROYECTOS DEL USUARIO */}
-            {/* ======================================================= */}
+            {/* Sección de Proyectos */}
             <div className={styles.section} style={{ marginTop: '2rem' }}>
                 <h2 className={styles.sectionTitle} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <FaRocket /> 
@@ -460,24 +534,18 @@ const Profile = () => {
                 </h2>
                 
                 {userProjects.length > 0 ? (
-                    <div style={{ 
-                        display: 'flex', 
-                        flexWrap: 'wrap', 
-                        gap: '20px', 
-                        justifyContent: 'center',
-                        marginTop: '20px'
-                    }}>
+                    <div className={styles.projectsGrid}>
                         {userProjects.map(project => (
                             <ProjectCard key={project.id} project={project} />
                         ))}
                     </div>
                 ) : (
-                    <div style={{ textAlign: 'center', padding: '40px', color: '#666', background: 'white', borderRadius: '12px' }}>
+                    <div className={styles.emptyProjects}>
                         <p>{isOwnProfile ? 'Aún no has publicado ningún proyecto.' : 'Este usuario aún no tiene proyectos publicados.'}</p>
                         {isOwnProfile && (
                             <button 
                                 onClick={() => navigate('/crear-proyecto')}
-                                style={{ marginTop: '10px', padding: '10px 20px', background: '#667eea', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}
+                                className={styles.createProjectButton}
                             >
                                 ¡Crear mi primer proyecto!
                             </button>
@@ -485,20 +553,19 @@ const Profile = () => {
                     </div>
                 )}
             </div>
-            {/* ======================================================= */}
-
 
             {/* Secciones de Edición y Verificación (Solo Owner) */}
             {isOwnProfile && (
                 <>
-                    {/* Verificación */}
+                    {/* Verificación de Identidad */}
                     <div className={styles.section}>
                         <h2 className={styles.sectionTitle}><FaUserCheck /> Verificación de Identidad</h2>
                         <div className={styles.verificationCard}>
                             {isVerified ? (
                                 <div className={styles.verifiedStatusContainer}>
-                                    <FaCheckCircle color="#10b981" size={40} />
+                                    <FaCheckCircle className={styles.verifiedIcon} />
                                     <h3>¡Identidad Verificada!</h3>
+                                    <p>Tu identidad ha sido verificada exitosamente.</p>
                                 </div>
                             ) : (
                                 <>
@@ -513,19 +580,34 @@ const Profile = () => {
                                                     value={ciNumberInput} 
                                                     onChange={(e) => setCiNumberInput(e.target.value)} 
                                                     className={styles.inputField} 
+                                                    placeholder="Ej: 1234567"
                                                     disabled={isVerificationPending}
                                                 />
                                             </div>
                                         </div>
                                         <div className={styles.formGroup}>
                                             <label className={styles.label}>Foto Frontal CI:</label>
-                                            <input type="file" accept="image/*" onChange={handleCiPhotoChange} className={styles.fileInput} disabled={isVerificationPending} />
-                                            {ciPhotoFile && <span style={{fontSize:'0.8rem', color:'green'}}>Foto seleccionada</span>}
+                                            <div className={styles.fileUploadArea}>
+                                                <input 
+                                                    type="file" 
+                                                    accept="image/*" 
+                                                    onChange={handleCiPhotoChange} 
+                                                    className={styles.fileInput} 
+                                                    disabled={isVerificationPending}
+                                                    id="ciPhotoUpload"
+                                                />
+                                                <label htmlFor="ciPhotoUpload" className={styles.fileUploadLabel}>
+                                                    <FaUpload /> {ciPhotoFile ? 'Foto seleccionada' : 'Seleccionar foto'}
+                                                </label>
+                                                {ciPhotoFile && (
+                                                    <span className={styles.fileSelected}>✓ Foto lista para enviar</span>
+                                                )}
+                                            </div>
                                         </div>
                                         <button 
                                             onClick={handleRequestVerification} 
                                             className={styles.verificationButton} 
-                                            disabled={isVerificationPending || loading}
+                                            disabled={isVerificationPending || loading || !ciNumberInput || (!ciPhotoFile && !profileUserData.ciFrontBase64)}
                                             style={{ opacity: isVerificationPending ? 0.7 : 1 }}
                                         >
                                             {isVerificationPending ? 'Solicitud Enviada' : 'Solicitar Verificación'}
@@ -536,24 +618,107 @@ const Profile = () => {
                         </div>
                     </div>
 
-                    {/* Editar Perfil */}
+                    {/* Editar Perfil (Formulario completo) */}
                     {isEditing && (
                         <div className={styles.section}>
-                            <h2 className={styles.sectionTitle}><FiEdit /> Editar Información</h2>
+                            <h2 className={styles.sectionTitle}><FiEdit /> Editar Información del Perfil</h2>
                             <form onSubmit={handleUpdateProfile} className={styles.form}>
                                 <div className={styles.formGroup}>
-                                    <label>Nombre Público:</label>
-                                    <input type="text" value={displayName} onChange={(e) => setDisplayName(e.target.value)} className={styles.inputField} />
+                                    <label className={styles.formLabel}>
+                                        <FaUser className={styles.labelIcon} /> Nombre Público:
+                                    </label>
+                                    <input 
+                                        type="text" 
+                                        value={displayName} 
+                                        onChange={(e) => setDisplayName(e.target.value)} 
+                                        className={styles.inputField} 
+                                        placeholder="Tu nombre público"
+                                    />
                                 </div>
+                                
                                 <div className={styles.formGroup}>
-                                    <label>Nueva Foto (Max 200KB):</label>
-                                    <input type="file" onChange={handlePhotoChange} className={styles.fileInput} />
+                                    <label className={styles.formLabel}>
+                                        <FaCamera className={styles.labelIcon} /> Nueva Foto de Perfil (Max 200KB):
+                                    </label>
+                                    <div className={styles.fileUploadArea}>
+                                        <input 
+                                            type="file" 
+                                            accept="image/*" 
+                                            onChange={handlePhotoChange} 
+                                            className={styles.fileInput} 
+                                            id="profilePhotoUpload"
+                                        />
+                                        <label htmlFor="profilePhotoUpload" className={styles.fileUploadLabel}>
+                                            <FaUpload /> Seleccionar nueva foto
+                                        </label>
+                                        {newPhotoFile && (
+                                            <span className={styles.fileSelected}>✓ Nueva foto seleccionada</span>
+                                        )}
+                                        <div className={styles.fileHint}>
+                                            Se recomienda imagen cuadrada de al menos 200x200px
+                                        </div>
+                                    </div>
                                 </div>
+
+                                <div className={styles.formGroup}>
+                                    <label className={styles.formLabel}>
+                                        <MdAttachFile className={styles.labelIcon} /> Documento Adjunto (Max 1MB):
+                                    </label>
+                                    <div className={styles.fileUploadArea}>
+                                        <input 
+                                            type="file" 
+                                            accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png" 
+                                            onChange={handleDocumentChange} 
+                                            className={styles.fileInput} 
+                                            id="documentUpload"
+                                        />
+                                        <label htmlFor="documentUpload" className={styles.fileUploadLabel}>
+                                            <FaUpload /> {documentInfo.name ? 'Cambiar documento' : 'Seleccionar documento'}
+                                        </label>
+                                        {documentInfo.name && (
+                                            <div className={styles.fileSelected}>
+                                                ✓ {documentFile ? 'Nuevo documento:' : 'Documento actual:'} <strong>{documentInfo.name}</strong>
+                                            </div>
+                                        )}
+                                        <div className={styles.fileHint}>
+                                            Sube documentos como CV, portafolio, certificaciones, etc.
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div className={styles.formActions}>
-                                    <button type="submit" className={styles.saveButton}><FaSave /> Guardar</button>
-                                    <button type="button" onClick={() => setIsEditing(false)} className={styles.cancelButton}><FaTimes /> Cancelar</button>
+                                    <button type="submit" className={styles.saveButton} disabled={loading}>
+                                        <FaSave /> {loading ? 'Guardando...' : 'Guardar Cambios'}
+                                    </button>
+                                    <button 
+                                        type="button" 
+                                        onClick={() => {
+                                            setIsEditing(false);
+                                            setNewPhotoFile(null);
+                                            setDocumentFile(null);
+                                            setMessage(null);
+                                        }} 
+                                        className={styles.cancelButton}
+                                    >
+                                        <FaTimes /> Cancelar
+                                    </button>
                                 </div>
                             </form>
+                        </div>
+                    )}
+
+                    {/* Botón para activar modo edición si no está activo */}
+                    {isOwnProfile && !isEditing && (
+                        <div className={styles.section} style={{ textAlign: 'center' }}>
+                            <button 
+                                onClick={() => setIsEditing(true)} 
+                                className={styles.editSectionButton}
+                            >
+                                <FiEdit /> Editar Información del Perfil
+                            </button>
+                            <p className={styles.editHint}>
+                                Haz clic aquí para cambiar tu foto de perfil, nombre público o subir documentos
+                            </p>
                         </div>
                     )}
                 </>
@@ -563,7 +728,7 @@ const Profile = () => {
 };
 
 // =========================================================
-// 5. ESTILOS DE LA TARJETA (Copiados de tu código)
+// ESTILOS DE LA TARJETA DE PROYECTO
 // =========================================================
 const cardStyles = {
     cardWrapper: {

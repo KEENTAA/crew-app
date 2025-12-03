@@ -1,5 +1,6 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
+import { useAuth } from './AuthContext'; // <--- IMPORTANTE: Asegúrate de tener este import
 
 // Componentes Home
 import Header from './components/Header';
@@ -173,9 +174,17 @@ const NotFoundPage = () => (
 );
 
 export default function App() {
+    
+    // --- LÓGICA DE VERIFICACIÓN ---
+    const { userDoc, currentUser } = useAuth(); 
+    // isIDVerified debe ser boolean 'true'
+    const isVerified = currentUser && userDoc?.isIDVerified === true;
+    // -----------------------------
+    
     return (
         <div className="App" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-            <Header />
+            {/* PASAR EL ESTADO DE VERIFICACIÓN AL HEADER */}
+            <Header isUserVerified={isVerified} />
 
             <main style={{ flex: 1 }}>
                 <Routes>
@@ -232,6 +241,7 @@ export default function App() {
                         <a href="/proyectos" style={{ display: 'block', color: 'rgba(255, 255, 255, 0.8)', textDecoration: 'none', marginBottom: '8px', transition: 'color 0.3s ease' }}>
                             Descubrir Proyectos
                         </a>
+                        {/* Se puede mantener el enlace aquí, pero la lógica de deshabilitado está en el componente Header */}
                         <a href="/crear-proyecto" style={{ display: 'block', color: 'rgba(255, 255, 255, 0.8)', textDecoration: 'none', marginBottom: '8px', transition: 'color 0.3s ease' }}>
                             Crear Proyecto
                         </a>

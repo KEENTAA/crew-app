@@ -191,7 +191,21 @@
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 204, 102, 0.3);
 }
-
+.createProjectBtn.disabled {
+    background: #ccc !important; /* Gris para indicar deshabilitado */
+    color: #666 !important;
+    border: 2px solid #aaa !important;
+    cursor: not-allowed !important;
+    opacity: 0.7;
+    /* Necesitamos pointer-events: all; para que el 'title' (tooltip) funcione */
+    pointer-events: all; 
+}
+.createProjectBtn.disabled:hover, 
+.createProjectBtn.disabled:active {
+    background: #ccc !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
 /* Botones de Auth */
 .loginBtn {
   background: transparent;
